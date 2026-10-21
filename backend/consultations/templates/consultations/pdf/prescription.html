@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ordonnance Médicale</title>
+    <style>
+        body { font-family: "Helvetica", "Arial", sans-serif; font-size: 14px; margin: 40px; }
+        .header { text-align: center; border-bottom: 2px solid #0A6E4F; padding-bottom: 20px; margin-bottom: 30px; }
+        .header h1 { color: #0A6E4F; margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0; color: #555; }
+        .patient-info, .doctor-info { width: 50%; float: left; margin-bottom: 30px; }
+        .doctor-info { text-align: right; }
+        .clear { clear: both; }
+        .prescription-title { text-align: center; margin-bottom: 30px; }
+        .prescription-title h2 { text-transform: uppercase; letter-spacing: 2px; }
+        .items { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .items th, .items td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
+        .items th { background-color: #f9f9f9; color: #333; }
+        .notes { margin-bottom: 50px; }
+        .footer { position: fixed; bottom: 40px; right: 40px; text-align: center; }
+        .signature-line { border-top: 1px solid #000; width: 200px; margin-top: 50px; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ clinic_name }}</h1>
+        <p>{{ clinic_address }} | Tel: {{ clinic_phone }}</p>
+    </div>
+
+    <div class="patient-info">
+        <strong>Patient(e) :</strong> {{ patient.get_full_name }}<br>
+        <strong>NIP :</strong> {{ patient.mrn }}<br>
+        <strong>Âge :</strong> {{ patient.age }} ans<br>
+        <strong>Sexe :</strong> {{ patient.get_gender_display }}
+    </div>
+
+    <div class="doctor-info">
+        <strong>Prescripteur :</strong> Dr. {{ doctor.user.last_name }} {{ doctor.user.first_name }}<br>
+        <strong>Spécialité :</strong> {{ doctor.specialization|default:"Médecin Généraliste" }}<br>
+        <strong>Date :</strong> {{ prescription.created_at|date:"d/m/Y" }}
+    </div>
+    
+    <div class="clear"></div>
+
+    <div class="prescription-title">
+        <h2>Ordonnance Médicale</h2>
+    </div>
+
+    <table class="items">
+        <thead>
+            <tr>
+                <th>Médicament</th>
+                <th>Posologie & Fréquence</th>
+                <th>Durée</th>
+                <th>Instructions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td><strong>{{ item.medication_name }}</strong></td>
+                <td>{{ item.dosage }}, {{ item.frequency }}</td>
+                <td>{{ item.duration }}</td>
+                <td>{{ item.instructions }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if prescription.notes %}
+    <div class="notes">
+        <strong>Remarques complémentaires :</strong><br>
+        <p>{{ prescription.notes|linebreaks }}</p>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        <p>Signature du Médecin</p>
+        <div class="signature-line">
+            Dr. {{ doctor.user.last_name }}
+        </div>
+    </div>
+</body>
+</html>
